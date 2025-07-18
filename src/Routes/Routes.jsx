@@ -6,7 +6,6 @@ import AuthLayout from '../Layout/AuthLayout';
 import Login from '../Pages/Login';
 import Register from '../Pages/Register';
 import PostDetails from '../Pages/PostDetails';
-import PaymentSuccess from '../Pages/PaymentSuccess';
 import Dashboard from '../Layout/Dashboard';
 import MyProfile from '../Pages/MyProfile';
 import AddPost from '../Pages/AddPost';
@@ -17,6 +16,7 @@ import AdminDashboard from '../Layout/adminDashboard';
 import ManagesUsers from '../Pages/ManagesUsers';
 import ReportedActivities from '../Pages/ReportedActivities';
 import AdminProfile from '../Pages/AdminProfile';
+import PaymentSuccess from '../Pages/PaymentSuccess';
 
 export const router = createBrowserRouter([
   {

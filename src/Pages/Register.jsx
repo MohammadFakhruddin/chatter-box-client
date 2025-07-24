@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import GoogleSignIn from '../Provider/GoogleSignIn';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import ShowHidePassword from '../Component/ShowHidePassword';
 import { AuthContext } from '../Provider/AuthContext';
 import axios from 'axios';
@@ -15,37 +15,37 @@ const Register = () => {
   const location = useLocation();
   const from = location.state?.from || '/';
 
+  const onSubmit = async (data) => {
+    setError('');
+    try {
+      // Create user
+      const result = await createUser(data.email, data.password);
+      const createdUser = result.user;
+      console.log(createdUser);
 
-const onSubmit = async (data) => {
-  setError('');
-  try {
-    // Create user
-    const result = await createUser(data.email, data.password);
-    const createdUser = result.user;
-    console.log(createdUser);
+      // Update user profile
+      await updateUser({
+        displayName: data.name,
+        photoURL: data.photoURL,
+      });
 
-    // ✅ Update user profile (name & photo)
-    await updateUser({
-      displayName: data.name,
-      photoURL: data.photoURL,
-    });
+      // Save user in DB
+      const userData = {
+        name: data.name,
+        email: data.email,
+        photoURL: data.photoURL,
+        role: 'user',
+      };
+      await axios.post('https://chatter-box-server-three.vercel.app/users', userData);
 
-    // ✅ Save user in backend database
-    const userData = {
-      name: data.name,
-      email: data.email,
-      photoURL: data.photoURL,
-      role: 'user', // You can change this logic
-    };
-    await axios.post('https://chatter-box-server-three.vercel.app/users', userData);
-
-    toast.success('Registration Successful!');
-    navigate(from);
-  } catch (err) {
-    setError(err.code || err.message || 'Registration failed');
-  }
-};
-
+      toast.success('🎉 Registration Successful!');
+      navigate(from);
+    } catch (err) {
+      console.error(err);
+      toast.error('❌ Registration failed.');
+      setError(err.message || 'Registration failed');
+    }
+  };
 
   return (
     <div className="card bg-white w-full mx-auto my-20 max-w-sm shrink-0 shadow-2xl">

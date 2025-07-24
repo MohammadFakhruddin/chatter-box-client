@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import GoogleSignIn from '../Provider/GoogleSignIn';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import ShowHidePassword from '../Component/ShowHidePassword';
 import { AuthContext } from '../Provider/AuthContext';
 
@@ -19,10 +19,12 @@ const Login = () => {
     try {
       const result = await signIn(data.email, data.password);
       console.log(result);
-      toast.success('Login Successful!');
+      toast.success('✅ Login Successful!');
       navigate(from);
     } catch (err) {
-      setError(err.code || err.message || 'Login failed');
+      console.error(err);
+      toast.error('❌ Login failed. Please check your credentials.');
+      setError(err.message || 'Login failed');
     }
   };
 
@@ -51,7 +53,12 @@ const Login = () => {
 
           <GoogleSignIn />
 
-          <p className="mt-3">Don't have an account? <Link className="text-primary font-semibold hover:text-secondary" to={'/auth/register'}>Sign Up</Link></p>
+          <p className="mt-3">
+            Don't have an account?{' '}
+            <Link className="text-primary font-semibold hover:text-secondary" to={'/auth/register'}>
+              Sign Up
+            </Link>
+          </p>
         </fieldset>
       </form>
     </div>

@@ -4,6 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../Provider/AuthContext";
 import { FacebookShareButton, FacebookIcon } from "react-share";
 import dayjs from "dayjs";
+import toast from "react-hot-toast";
 
 const PostDetails = () => {
   const { user } = useContext(AuthContext);
@@ -12,39 +13,47 @@ const PostDetails = () => {
   const [commentText, setCommentText] = useState("");
   const [reload, setReload] = useState(false);
   const [comments, setComments] = useState([]);
-
   const shareUrl = `${window.location.origin}/post/${id}`;
 
   useEffect(() => {
-    axios.get(`https://chatter-box-server-three.vercel.app/posts/${id}`).then((res) => setPost(res.data));
+    axios
+      .get(`https://chatter-box-server-three.vercel.app/posts/${id}`)
+      .then((res) => setPost(res.data))
+      .catch(() => toast.error("Failed to load post"));
   }, [id, reload]);
 
-
   useEffect(() => {
-    axios.get(`https://chatter-box-server-three.vercel.app/comments/${id}`).then((res) => {
-      setComments(res.data);
-    });
+    axios
+      .get(`https://chatter-box-server-three.vercel.app/comments/${id}`)
+      .then((res) => setComments(res.data))
+      .catch(() => toast.error("Failed to load comments"));
   }, [id, reload]);
 
   const handleUpvote = () => {
-    if (!user) return alert("Login to vote!");
+    if (!user) return toast("Login to vote!", { icon: "⚠️" });
     axios
       .patch(`https://chatter-box-server-three.vercel.app/posts/${id}/upvote?email=${user.email}`)
-      .then(() => setReload(!reload))
-      .catch((err) => alert(err.response.data));
+      .then(() => {
+        toast.success("Upvoted!");
+        setReload(!reload);
+      })
+      .catch((err) => toast.error(err.response?.data || "Upvote failed"));
   };
 
   const handleDownvote = () => {
-    if (!user) return alert("Login to vote!");
+    if (!user) return toast("Login to vote!", { icon: "⚠️" });
     axios
       .patch(`https://chatter-box-server-three.vercel.app/posts/${id}/downvote?email=${user.email}`)
-      .then(() => setReload(!reload))
-      .catch((err) => alert(err.response.data));
+      .then(() => {
+        toast.success("Downvoted!");
+        setReload(!reload);
+      })
+      .catch((err) => toast.error(err.response?.data || "Downvote failed"));
   };
 
   const handleComment = () => {
-    if (!user) return alert("Login to comment!");
-    if (!commentText.trim()) return;
+    if (!user) return toast("Login to comment!", { icon: "⚠️" });
+    if (!commentText.trim()) return toast("Comment cannot be empty!", { icon: "⚠️" });
 
     axios
       .post(`https://chatter-box-server-three.vercel.app/comments`, {
@@ -56,9 +65,10 @@ const PostDetails = () => {
       .then(() => {
         setCommentText("");
         setReload(!reload);
-      });
+        toast.success("Comment added");
+      })
+      .catch(() => toast.error("Failed to post comment"));
   };
-
 
   if (!post) return <div className="text-center my-10">Loading post...</div>;
 
@@ -88,8 +98,6 @@ const PostDetails = () => {
       <div className="flex gap-5 items-center mb-6">
         <button onClick={handleUpvote} className="btn btn-outline btn-sm">👍 {post.upvote}</button>
         <button onClick={handleDownvote} className="btn btn-outline btn-sm">👎 {post.downvote}</button>
-
-        {/* Share Button */}
         <FacebookShareButton url={shareUrl}>
           <FacebookIcon size={32} round />
         </FacebookShareButton>
@@ -117,14 +125,17 @@ const PostDetails = () => {
         <div className="space-y-4">
           {comments.map((comment, idx) => (
             <div key={idx} className="flex gap-3 items-start">
-              <img src={`https://api.dicebear.com/6.x/initials/svg?seed=${comment.commenterName}`} className="w-8 h-8 rounded-full" alt="user" />
+              <img
+                src={`https://api.dicebear.com/6.x/initials/svg?seed=${comment.commenterName}`}
+                className="w-8 h-8 rounded-full"
+                alt="user"
+              />
               <div className="bg-base-200 p-3 rounded-lg">
                 <p className="font-medium">{comment.commenterName}</p>
                 <p className="text-sm">{comment.commentText}</p>
               </div>
             </div>
           ))}
-
         </div>
       </div>
     </div>

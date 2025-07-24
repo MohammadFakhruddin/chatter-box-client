@@ -32,19 +32,30 @@ const ReportedActivities = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this comment?");
-    if (!confirmDelete) return;
 
-    try {
-      await axios.delete(`https://chatter-box-server-three.vercel.app/comments/${id}`);
+
+// Make sure this is set globally somewhere like in AuthProvider
+axios.defaults.withCredentials = true;
+
+const handleDelete = async (id) => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this comment?");
+  if (!confirmDelete) return;
+
+  try {
+    const response = await axios.delete(`https://chatter-box-server-three.vercel.app/comments/${id}`);
+    
+    if (response.data?.success) {
       toast.success("🗑️ Comment deleted successfully.");
-      fetchReports();
-    } catch (err) {
-      console.error("Delete failed:", err);
-      toast.error("❌ Failed to delete comment.");
+      fetchReports(); // Refresh the list if applicable
+    } else {
+      toast.error("❌ Could not delete comment.");
     }
-  };
+  } catch (err) {
+    console.error("Delete failed:", err.response?.data || err.message);
+    toast.error("❌ Failed to delete comment.");
+  }
+};
+
 
   return (
     <section className="max-w-6xl mx-auto p-4 md:p-6">

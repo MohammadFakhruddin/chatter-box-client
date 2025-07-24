@@ -18,7 +18,7 @@ const AllPosts = ({ posts, page, setPage, totalPages }) => {
                   <span className="font-medium">{post.author.name}</span>
                   <span className="text-sm text-gray-400">· {new Date(post.createdAt).toLocaleDateString()}</span>
                 </div>
-                <h3 className="text-lg font-semibold text-neutral">{post.title}</h3>
+                <h3 className="text-lg font-semibold  text-white">{post.title}</h3>
                 <div className="flex gap-2 flex-wrap mt-2">
                   {post.tags.map((tag, idx) => (
                     <span key={idx} className="badge badge-outline badge-secondary text-xs">#{tag}</span>

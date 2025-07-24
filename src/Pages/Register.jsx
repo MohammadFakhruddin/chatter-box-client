@@ -5,32 +5,71 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import ShowHidePassword from '../Component/ShowHidePassword';
 import { AuthContext } from '../Provider/AuthContext';
+import axios from 'axios';
 
-const Login = () => {
-  const { signIn } = useContext(AuthContext);
+const Register = () => {
+  const { createUser, updateUser } = useContext(AuthContext);
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [error, setError] = useState('');
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
   const from = location.state?.from || '/';
 
-  const onSubmit = async (data) => {
-    setError('');
-    try {
-      const result = await signIn(data.email, data.password);
-      console.log(result);
-      toast.success('Login Successful!');
-      navigate(from);
-    } catch (err) {
-      setError(err.code || err.message || 'Login failed');
-    }
-  };
+
+const onSubmit = async (data) => {
+  setError('');
+  try {
+    // Create user
+    const result = await createUser(data.email, data.password);
+    const createdUser = result.user;
+    console.log(createdUser);
+
+    // ✅ Update user profile (name & photo)
+    await updateUser({
+      displayName: data.name,
+      photoURL: data.photoURL,
+    });
+
+    // ✅ Save user in backend database
+    const userData = {
+      name: data.name,
+      email: data.email,
+      photoURL: data.photoURL,
+      role: 'user', // You can change this logic
+    };
+    await axios.post('http://localhost:3000/users', userData);
+
+    toast.success('Registration Successful!');
+    navigate(from);
+  } catch (err) {
+    setError(err.code || err.message || 'Registration failed');
+  }
+};
+
 
   return (
     <div className="card bg-white w-full mx-auto my-20 max-w-sm shrink-0 shadow-2xl">
       <form onSubmit={handleSubmit(onSubmit)} className="card-body">
-        <h1 className="text-3xl text-center text-accent font-bold">Login now!</h1>
+        <h1 className="text-3xl text-center text-accent font-bold">Register</h1>
         <fieldset className="fieldset">
+
+          <label className="label">Name</label>
+          <input
+            {...register('name', { required: true })}
+            type="text"
+            className="input"
+            placeholder="Your name"
+          />
+          {errors.name && <p className="text-red-600">Name is required.</p>}
+
+          <label className="label">Photo URL</label>
+          <input
+            {...register('photoURL', { required: true })}
+            type="text"
+            className="input"
+            placeholder="https://your-photo-url"
+          />
+          {errors.photoURL && <p className="text-red-600">Photo URL is required.</p>}
 
           <label className="label">Email</label>
           <input
@@ -45,17 +84,22 @@ const Login = () => {
 
           {error && <p className="text-red-600 mt-2">{error}</p>}
 
-          <button type="submit" className="btn btn-primary hover:btn-secondary mt-4">Login</button>
+          <button type="submit" className="btn btn-primary hover:btn-secondary mt-4">Register</button>
 
           <p className="text-center font-bold my-2 text-primary">OR</p>
 
           <GoogleSignIn />
 
-          <p className="mt-3">Don't have an account? <Link className="text-primary font-semibold hover:text-secondary" to={'/auth/register'}>Sign Up</Link></p>
+          <p className="mt-3">
+            Already have an account?{' '}
+            <Link className="text-primary font-semibold hover:text-secondary" to={'/auth/login'}>
+              Login
+            </Link>
+          </p>
         </fieldset>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

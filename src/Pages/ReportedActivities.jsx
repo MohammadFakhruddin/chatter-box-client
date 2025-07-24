@@ -7,8 +7,12 @@ const ReportedActivities = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchReports = async () => {
-    const res = await axios.get("/comments?reported=true"); // Update this if your endpoint is different
-    setReportedComments(res.data);
+    try {
+      const res = await axios.get("http://localhost:3000/reported-comments");
+      setReportedComments(res.data || []);
+    } catch (err) {
+      console.error("Failed to load reports:", err);
+    }
   };
 
   useEffect(() => {
@@ -16,123 +20,121 @@ const ReportedActivities = () => {
   }, []);
 
   const handleResolve = async (id) => {
-    await axios.patch(`/comments/${id}/resolve`);
-    fetchReports();
+    try {
+      await axios.patch(`http://localhost:3000/comments/${id}/resolve-report`);
+      fetchReports();
+    } catch (err) {
+      console.error("Resolve failed:", err);
+    }
   };
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this comment?");
     if (!confirmDelete) return;
-    await axios.delete(`/comments/${id}`);
-    fetchReports();
+
+    try {
+      await axios.delete(`http://localhost:3000/comments/${id}`);
+      fetchReports();
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
   };
 
   return (
-    <section className="max-w-6xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">🚩 Reported Comments</h2>
+<section className="max-w-6xl mx-auto p-4 md:p-6">
+  <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">
+    🚩 Reported Comments Dashboard
+  </h2>
 
-      {reportedComments.length === 0 ? (
-        <p>No reports yet.</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="table table-zebra w-full">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Commenter</th>
-                <th>Email</th>
-                <th>Comment</th>
-                <th>Feedback</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reportedComments.map((comment, index) => (
-                <tr key={comment._id}>
-                  <td>{index + 1}</td>
-                  <td>{comment.commenterName}</td>
-                  <td>{comment.commenterEmail}</td>
-                  <td>
-                    {comment.commentText.length > 20 ? (
-                      <>
-                        {comment.commentText.slice(0, 20)}...
-                        <button
-                          onClick={() => {
-                            setSelectedComment(comment);
-                            setIsModalOpen(true);
-                          }}
-                          className="text-blue-500 ml-1 underline"
-                        >
-                          Read More
-                        </button>
-                      </>
-                    ) : (
-                      comment.commentText
-                    )}
-                  </td>
-                  <td>{comment.reportFeedback}</td>
-                  <td>
-                    <span
-                      className={`badge ${
-                        comment.reportStatus === "resolved"
-                          ? "badge-success"
-                          : "badge-warning"
-                      }`}
-                    >
-                      {comment.reportStatus}
-                    </span>
-                  </td>
-                  <td className="flex gap-2">
-                    {comment.reportStatus !== "resolved" && (
-                      <button
-                        className="btn btn-xs btn-success"
-                        onClick={() => handleResolve(comment._id)}
-                      >
-                        Mark Resolved
-                      </button>
-                    )}
+  {reportedComments.length === 0 ? (
+    <p className="text-center text-gray-600">No reported comments at the moment.</p>
+  ) : (
+    <div className="overflow-x-auto">
+      <table className="table w-full table-zebra border">
+        <thead className="bg-gray-100 text-black">
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Comment</th>
+            <th>Feedback</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {reportedComments.map((comment, index) => (
+            <tr key={comment._id}>
+              <td>{index + 1}</td>
+              <td>{comment.commenterName || "N/A"}</td>
+              <td>{comment.commenterEmail || "N/A"}</td>
+              <td>
+                {comment.commentText?.length > 25 ? (
+                  <>
+                    {comment.commentText.slice(0, 25)}...
                     <button
-                      className="btn btn-xs btn-error"
-                      onClick={() => handleDelete(comment._id)}
+                      onClick={() => {
+                        setSelectedComment(comment);
+                        setIsModalOpen(true);
+                      }}
+                      className="text-blue-600 underline text-sm ml-1"
                     >
-                      Delete
+                      Read More
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Modal for full comment */}
-      {isModalOpen && (
-        <>
-          <input
-            type="checkbox"
-            id="comment-modal"
-            className="modal-toggle"
-            checked={isModalOpen}
-            readOnly
-          />
-          <div className="modal modal-open">
-            <div className="modal-box relative">
-              <h3 className="font-bold text-lg mb-4">Full Comment</h3>
-              <p>{selectedComment?.commentText}</p>
-              <div className="modal-action">
-                <button
-                  className="btn"
-                  onClick={() => setIsModalOpen(false)}
+                  </>
+                ) : (
+                  comment.commentText || "No comment"
+                )}
+              </td>
+              <td>{comment.reportFeedback || "N/A"}</td>
+              <td>
+                <span
+                  className={`badge ${
+                    comment.reportStatus === "resolved" ? "badge-success" : "badge-warning"
+                  }`}
                 >
-                  Close
+                  {comment.reportStatus || "Pending"}
+                </span>
+              </td>
+              <td className="flex flex-wrap gap-2">
+                {comment.reportStatus !== "resolved" && (
+                  <button
+                    className="btn btn-xs btn-success"
+                    onClick={() => handleResolve(comment._id)}
+                  >
+                    Resolve
+                  </button>
+                )}
+                <button
+                  className="btn btn-xs btn-error"
+                  onClick={() => handleDelete(comment._id)}
+                >
+                  Delete
                 </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-    </section>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+
+  {/* Modal */}
+  {isModalOpen && selectedComment && (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+      <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-xl">
+        <h3 className="text-xl font-semibold mb-4">Full Comment</h3>
+        <p className="text-gray-800 mb-6">{selectedComment.commentText}</p>
+        <div className="text-right">
+          <button className="btn btn-sm btn-primary" onClick={() => setIsModalOpen(false)}>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+</section>
+
   );
 };
 

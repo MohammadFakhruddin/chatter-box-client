@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { FaBell, FaBars } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import logo from "../assets/Chatterbox logo.png";
 import { AuthContext } from "../Provider/AuthContext";
 import axios from "axios";
@@ -9,25 +9,40 @@ const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
   const [announcementCount, setAnnouncementCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [role, setRole] = useState(null); // ⬅️ New role state
 
   const handleLogout = () => {
     logOut().catch((err) => console.error("Logout error", err));
   };
 
+  // Fetch announcement count
   useEffect(() => {
     axios
-      .get("/announcement-count")
+      .get("http://localhost:3000/announcement-count")
       .then((res) => setAnnouncementCount(res.data.count))
       .catch((err) => console.error("Failed to fetch announcements", err));
   }, []);
 
+  // Fetch user role from backend
+  useEffect(() => {
+    if (user?.email) {
+      axios
+        .get(`http://localhost:3000/users/${user.email}`) 
+        .then((res) => setRole(res.data.role))
+        .catch((err) => console.error("Failed to fetch user role", err));
+    }
+  }, [user]);
+
+  console.log("User:", user, "Role from DB:", role);
+
+
   return (
-    <div className="bg-base-100 shadow-md sticky top-0 z-50">
+    <div className="bg-white shadow-md sticky top-0 z-50">
       <div className="navbar max-w-7xl mx-auto px-4 py-3 text-neutral font-sans">
         {/* Logo + Name */}
         <div className="flex-1 flex items-center gap-3">
-          <img src={logo} alt="Chatterbox Logo" className="h-10" />
-          <span className="text-xl font-bold text-accent">Chatterbox</span>
+          <NavLink to={'/'}>          <img src={logo} alt="Chatterbox Logo" className="h-10" />
+          </NavLink>
         </div>
 
         {/* Desktop Menu */}
@@ -63,7 +78,9 @@ const Navbar = () => {
                   </span>
                 </li>
                 <li>
-                  <Link to="/dashboard">Dashboard</Link>
+                  <Link to={role === 'admin' ? '/admin-dashboard' : '/dashboard'}>
+                    Dashboard
+                  </Link>
                 </li>
                 <li>
                   <button onClick={handleLogout}>Logout</button>
@@ -104,7 +121,12 @@ const Navbar = () => {
           ) : (
             <div className="space-y-1 pt-2 border-t border-gray-200">
               <p className="font-semibold text-sm">{user.displayName}</p>
-              <Link to="/dashboard" className="hover:text-accent block">Dashboard</Link>
+              <Link
+                to={role === 'admin' ? '/admin-dashboard' : '/dashboard'}
+                className="hover:text-accent block"
+              >
+                Dashboard
+              </Link>
               <button onClick={handleLogout} className="hover:text-error">Logout</button>
             </div>
           )}

@@ -11,6 +11,7 @@ const PostDetails = () => {
   const [post, setPost] = useState(null);
   const [commentText, setCommentText] = useState("");
   const [reload, setReload] = useState(false);
+  const [comments, setComments] = useState([]);
 
   const shareUrl = `${window.location.origin}/post/${id}`;
 
@@ -18,16 +19,27 @@ const PostDetails = () => {
     axios.get(`http://localhost:3000/posts/${id}`).then((res) => setPost(res.data));
   }, [id, reload]);
 
+
+  useEffect(() => {
+    axios.get(`http://localhost:3000/comments/${id}`).then((res) => {
+      setComments(res.data);
+    });
+  }, [id, reload]);
+
   const handleUpvote = () => {
     if (!user) return alert("Login to vote!");
-   axios.patch(`http://localhost:3000/posts/${id}/upvote`)
-.then(() => setReload(!reload));
+    axios
+      .patch(`http://localhost:3000/posts/${id}/upvote?email=${user.email}`)
+      .then(() => setReload(!reload))
+      .catch((err) => alert(err.response.data));
   };
 
   const handleDownvote = () => {
     if (!user) return alert("Login to vote!");
-    axios.patch(`http://localhost:3000/posts/${id}/downvote`)
-.then(() => setReload(!reload));
+    axios
+      .patch(`http://localhost:3000/posts/${id}/downvote?email=${user.email}`)
+      .then(() => setReload(!reload))
+      .catch((err) => alert(err.response.data));
   };
 
   const handleComment = () => {
@@ -35,17 +47,18 @@ const PostDetails = () => {
     if (!commentText.trim()) return;
 
     axios
-      .post(`http://localhost:3000/posts/${id}/comment`, {
-        text: commentText,
-        userEmail: user.email,
-        userPhoto: user.photoURL,
-        userName: user.displayName,
+      .post(`http://localhost:3000/comments`, {
+        postId: id,
+        commenterEmail: user.email,
+        commenterName: user.displayName,
+        commentText: commentText,
       })
       .then(() => {
         setCommentText("");
         setReload(!reload);
       });
   };
+
 
   if (!post) return <div className="text-center my-10">Loading post...</div>;
 
@@ -65,11 +78,11 @@ const PostDetails = () => {
       <p className="text-gray-700 mb-4">{post.description}</p>
 
       {/* Tags */}
-<div className="flex flex-wrap gap-2 mb-4">
-  {post.tags?.map((t, idx) => (
-    <span key={idx} className="text-sm text-primary font-semibold">#{t}</span>
-  ))}
-</div>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {post.tags?.map((t, idx) => (
+          <span key={idx} className="text-sm text-primary font-semibold">#{t}</span>
+        ))}
+      </div>
 
       {/* Actions */}
       <div className="flex gap-5 items-center mb-6">
@@ -84,7 +97,7 @@ const PostDetails = () => {
 
       {/* Comments */}
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Comments</h2>
+        <h2 className="text-xl font-semibold mb-4 text-black">Comments</h2>
 
         {user ? (
           <div className="flex gap-2 mb-6">
@@ -102,15 +115,16 @@ const PostDetails = () => {
         )}
 
         <div className="space-y-4">
-          {post.comments?.map((comment, idx) => (
+          {comments.map((comment, idx) => (
             <div key={idx} className="flex gap-3 items-start">
-              <img src={comment.userPhoto} className="w-8 h-8 rounded-full" alt="user" />
+              <img src={`https://api.dicebear.com/6.x/initials/svg?seed=${comment.commenterName}`} className="w-8 h-8 rounded-full" alt="user" />
               <div className="bg-base-200 p-3 rounded-lg">
-                <p className="font-medium">{comment.userName}</p>
-                <p className="text-sm">{comment.text}</p>
+                <p className="font-medium">{comment.commenterName}</p>
+                <p className="text-sm">{comment.commentText}</p>
               </div>
             </div>
           ))}
+
         </div>
       </div>
     </div>

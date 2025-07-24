@@ -1,47 +1,44 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import axios from "axios";
 
-const feedbackOptions = [
-  "Spam or irrelevant content",
-  "Offensive language",
-  "Inappropriate behavior",
-];
-
-const truncateText = (text, maxLength = 20) => {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + "...";
-};
-
-const CommentsPage = ({ postId }) => {
+const CommentsPage = () => {
+  const { id } = useParams();
   const [comments, setComments] = useState([]);
-  const [selectedFeedbacks, setSelectedFeedbacks] = useState({}); // { commentId: feedback }
-  const [reportedComments, setReportedComments] = useState(new Set()); // Set of reported comment IDs
-  const [modalContent, setModalContent] = useState(null);
+  const [modalContent, setModalContent] = useState("");
+  const [reportedComments, setReportedComments] = useState(new Set());
+  const [selectedFeedbacks, setSelectedFeedbacks] = useState({});
+  const feedbackOptions = ["Spam", "Harassment", "Offensive", "Other"];
 
   useEffect(() => {
-    // Fetch comments for the post
     axios
-      .get(`http://localhost:3000/comments/${postId}`)
+      .get(`http://localhost:3000/comments/${id}`)
       .then((res) => setComments(res.data))
-      .catch((err) => console.error(err));
-  }, [postId]);
+      .catch((err) => console.error("Failed to fetch comments:", err));
+  }, [id]);
 
-  const handleFeedbackChange = (commentId, value) => {
-    setSelectedFeedbacks((prev) => ({ ...prev, [commentId]: value }));
+  const handleFeedbackChange = (commentId, feedback) => {
+    setSelectedFeedbacks({ ...selectedFeedbacks, [commentId]: feedback });
   };
 
-  const handleReport = (commentId) => {
-    // TODO: Call API to report comment, e.g. POST /comments/:commentId/report
-    // For now, just disable the button after reporting
-    setReportedComments((prev) => new Set(prev).add(commentId));
-    alert("Reported successfully!");
+  const handleReport = async (commentId) => {
+    const feedback = selectedFeedbacks[commentId];
+    if (!feedback) return;
+
+    try {
+      await axios.patch(`http://localhost:3000/comments/${commentId}/report`, { feedback });
+      setReportedComments(new Set(reportedComments).add(commentId));
+    } catch (err) {
+      console.error("Report failed:", err);
+    }
   };
+
+  const truncateText = (text) => text.slice(0, 20) + "...";
 
   return (
-    <div className="p-5 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Comments for Post {postId}</h2>
-
-      <table className="table w-full">
+    <div className="overflow-x-auto mt-10 px-4">
+      <h2 className="text-2xl font-bold mb-4 text-center">Comments for This Post</h2>
+      <table className="table w-full border">
         <thead>
           <tr>
             <th>Email</th>
@@ -51,22 +48,22 @@ const CommentsPage = ({ postId }) => {
           </tr>
         </thead>
         <tbody>
-          {comments.map(({ _id, userEmail, text }) => (
+          {comments.map(({ _id, commenterEmail, commentText }) => (
             <tr key={_id}>
-              <td>{userEmail}</td>
+              <td>{commenterEmail || "N/A"}</td>
               <td>
-                {text.length > 20 ? (
+                {commentText && commentText.length > 20 ? (
                   <>
-                    {truncateText(text)}{" "}
+                    {truncateText(commentText)}{" "}
                     <button
-                      onClick={() => setModalContent(text)}
-                      className="text-blue-600 underline"
+                      onClick={() => setModalContent(commentText)}
+                      className="text-blue-600 underline text-sm"
                     >
                       Read More
                     </button>
                   </>
                 ) : (
-                  text
+                  commentText || "No comment"
                 )}
               </td>
               <td>
@@ -87,9 +84,7 @@ const CommentsPage = ({ postId }) => {
               <td>
                 <button
                   className="btn btn-sm btn-error"
-                  disabled={
-                    reportedComments.has(_id) || !selectedFeedbacks[_id]
-                  }
+                  disabled={reportedComments.has(_id) || !selectedFeedbacks[_id]}
                   onClick={() => handleReport(_id)}
                 >
                   Report
@@ -100,21 +95,14 @@ const CommentsPage = ({ postId }) => {
         </tbody>
       </table>
 
-      {/* Modal for full comment */}
       {modalContent && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
-          onClick={() => setModalContent(null)}
-        >
-          <div
-            className="bg-white p-6 rounded max-w-lg w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="font-bold mb-4">Full Comment</h3>
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-4 rounded shadow-xl w-96">
+            <h3 className="text-lg font-bold mb-2">Full Comment</h3>
             <p className="mb-4">{modalContent}</p>
             <button
-              className="btn btn-primary"
-              onClick={() => setModalContent(null)}
+              onClick={() => setModalContent("")}
+              className="btn btn-sm btn-primary"
             >
               Close
             </button>

@@ -19,6 +19,7 @@ const Home = () => {
       const res = await axios.get("http://localhost:3000/posts", {
         params: {
           page,
+            size: 4,
           search,
           sort: sortBy === "popularity" ? "popularity" : undefined,
         },

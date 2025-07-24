@@ -3,7 +3,8 @@ import Select from "react-select";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../Provider/AuthContext";
-import { Link } from "react-router"; // for the button
+import { Link } from "react-router"; 
+import { toast } from "react-hot-toast";
 
 const tagOptions = [
   { value: "javascript", label: "JavaScript" },
@@ -27,7 +28,7 @@ const AddPost = () => {
   useEffect(() => {
     if (user?.email) {
       axios
-        .get(`http://localhost:3000/posts/count/${user.email}`)
+        .get(`https://chatter-box-server-three.vercel.app/posts/count/${user.email}`)
         .then((res) => {
           setPostCount(res.data.count);
           setLoading(false);
@@ -59,12 +60,12 @@ const AddPost = () => {
     };
 
     try {
-      await axios.post("http://localhost:3000/posts", postData);
-      alert("✅ Post added successfully!");
+      await axios.post("https://chatter-box-server-three.vercel.app/posts", postData);
+      toast.success("✅ Post added successfully!");
       navigate("/dashboard/myposts");
     } catch (err) {
       console.error(err);
-      alert("Failed to add post");
+      toast.error("❌ Failed to add post.");
     }
   };
 
@@ -141,6 +142,7 @@ const AddPost = () => {
           />
         </div>
 
+        {/* Image URL */}
         <div>
           <label className="label">Post Image URL</label>
           <input

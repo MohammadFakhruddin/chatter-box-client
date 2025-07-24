@@ -10,7 +10,7 @@ const MyPosts = () => {
   useEffect(() => {
     if (user?.email) {
       axios
-        .get(`http://localhost:3000/posts/user/${user.email}`)
+        .get(`https://chatter-box-server-three.vercel.app/posts/user/${user.email}`)
         .then((res) => setMyPosts(res.data))
         .catch((err) => console.error(err));
     }
@@ -20,7 +20,7 @@ const MyPosts = () => {
     const confirm = window.confirm("Are you sure you want to delete this post?");
     if (confirm) {
       axios
-        .delete(`http://localhost:3000/posts/${id}`)
+        .delete(`https://chatter-box-server-three.vercel.app/posts/${id}`)
         .then(() => {
           setMyPosts((prev) => prev.filter((post) => post._id !== id));
           alert("Post deleted successfully.");

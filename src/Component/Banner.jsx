@@ -6,7 +6,7 @@ const Banner = ({ onSearch, onToggleSort, sortBy }) => {
 
   useEffect(() => {
     // Fetch recent popular searches on mount
-    fetch("http://localhost:3000/popular-searches")
+    fetch("https://chatter-box-server-three.vercel.app/popular-searches")
       .then((res) => res.json())
       .then((data) => setPopularSearches(data))
       .catch(() => setPopularSearches([]));

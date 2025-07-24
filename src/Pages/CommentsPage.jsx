@@ -12,7 +12,7 @@ const CommentsPage = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/comments/${id}`)
+      .get(`https://chatter-box-server-three.vercel.app/comments/${id}`)
       .then((res) => setComments(res.data))
       .catch((err) => console.error("Failed to fetch comments:", err));
   }, [id]);
@@ -26,7 +26,7 @@ const CommentsPage = () => {
     if (!feedback) return;
 
     try {
-      await axios.patch(`http://localhost:3000/comments/${commentId}/report`, { feedback });
+      await axios.patch(`https://chatter-box-server-three.vercel.app/comments/${commentId}/report`, { feedback });
       setReportedComments(new Set(reportedComments).add(commentId));
     } catch (err) {
       console.error("Report failed:", err);

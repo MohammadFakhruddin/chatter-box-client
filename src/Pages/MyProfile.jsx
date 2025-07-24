@@ -10,7 +10,7 @@ const MyProfile = () => {
   useEffect(() => {
     if (user?.email) {
       axios
-        .get(`http://localhost:3000/posts/user/${user.email}`)
+        .get(`https://chatter-box-server-three.vercel.app/posts/user/${user.email}`)
         .then((res) => {
           const sorted = res.data.sort(
             (a, b) => new Date(b.createdAt) - new Date(a.createdAt)

@@ -11,7 +11,7 @@ const Membership = () => {
     if (!user) return alert("Please login first!");
 
     try {
-      const res = await axios.post("http://localhost:3000/create-checkout-session", {
+      const res = await axios.post("https://chatter-box-server-three.vercel.app/create-checkout-session", {
         email: user.email,
         userId: user._id,
       });

@@ -29,7 +29,7 @@ const AuthProvider = ({ children }) => {
       const loggedInUser = result.user;
 
       // 🔐 Get JWT via cookie
-      await axios.post("http://localhost:3000/jwt", {
+      await axios.post("https://chatter-box-server-three.vercel.app/jwt", {
         email: loggedInUser.email,
       });
 
@@ -51,7 +51,7 @@ const AuthProvider = ({ children }) => {
       const loggedInUser = result.user;
 
       // 🔐 Get JWT via cookie
-      await axios.post("http://localhost:3000/jwt", {
+      await axios.post("https://chatter-box-server-three.vercel.app/jwt", {
         email: loggedInUser.email,
       });
 
@@ -81,7 +81,7 @@ const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       await signOut(auth);
-      await axios.post("http://localhost:3000/logout"); // ✅ Clear JWT cookie
+      await axios.post("https://chatter-box-server-three.vercel.app/logout"); // ✅ Clear JWT cookie
       setUser(null);
     } catch (err) {
       console.error("Logout error:", err);

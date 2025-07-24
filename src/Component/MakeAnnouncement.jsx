@@ -22,7 +22,7 @@ const MakeAnnouncement = () => {
         createdAt: new Date().toISOString(), // ✅ Add current date
       };
 
-      await axios.post("http://localhost:3000/announcements", announcementData);
+      await axios.post("https://chatter-box-server-three.vercel.app/announcements", announcementData);
       alert("✅ Announcement made successfully!");
       setFormData({ authorImage: "", authorName: "", title: "", description: "" });
     } catch (err) {

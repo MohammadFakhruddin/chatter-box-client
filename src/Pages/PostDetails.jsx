@@ -16,12 +16,12 @@ const PostDetails = () => {
   const shareUrl = `${window.location.origin}/post/${id}`;
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/posts/${id}`).then((res) => setPost(res.data));
+    axios.get(`https://chatter-box-server-three.vercel.app/posts/${id}`).then((res) => setPost(res.data));
   }, [id, reload]);
 
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/comments/${id}`).then((res) => {
+    axios.get(`https://chatter-box-server-three.vercel.app/comments/${id}`).then((res) => {
       setComments(res.data);
     });
   }, [id, reload]);
@@ -29,7 +29,7 @@ const PostDetails = () => {
   const handleUpvote = () => {
     if (!user) return alert("Login to vote!");
     axios
-      .patch(`http://localhost:3000/posts/${id}/upvote?email=${user.email}`)
+      .patch(`https://chatter-box-server-three.vercel.app/posts/${id}/upvote?email=${user.email}`)
       .then(() => setReload(!reload))
       .catch((err) => alert(err.response.data));
   };
@@ -37,7 +37,7 @@ const PostDetails = () => {
   const handleDownvote = () => {
     if (!user) return alert("Login to vote!");
     axios
-      .patch(`http://localhost:3000/posts/${id}/downvote?email=${user.email}`)
+      .patch(`https://chatter-box-server-three.vercel.app/posts/${id}/downvote?email=${user.email}`)
       .then(() => setReload(!reload))
       .catch((err) => alert(err.response.data));
   };
@@ -47,7 +47,7 @@ const PostDetails = () => {
     if (!commentText.trim()) return;
 
     axios
-      .post(`http://localhost:3000/comments`, {
+      .post(`https://chatter-box-server-three.vercel.app/comments`, {
         postId: id,
         commenterEmail: user.email,
         commenterName: user.displayName,

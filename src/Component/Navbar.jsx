@@ -18,7 +18,7 @@ const Navbar = () => {
   // Fetch announcement count
   useEffect(() => {
     axios
-      .get("http://localhost:3000/announcement-count")
+      .get("https://chatter-box-server-three.vercel.app/announcement-count")
       .then((res) => setAnnouncementCount(res.data.count))
       .catch((err) => console.error("Failed to fetch announcements", err));
   }, []);
@@ -27,7 +27,7 @@ const Navbar = () => {
   useEffect(() => {
     if (user?.email) {
       axios
-        .get(`http://localhost:3000/users/${user.email}`) 
+        .get(`https://chatter-box-server-three.vercel.app/users/${user.email}`) 
         .then((res) => setRole(res.data.role))
         .catch((err) => console.error("Failed to fetch user role", err));
     }

@@ -22,7 +22,7 @@ const GoogleSignIn = () => {
       };
 
       // ✅ Save user to backend
-      await axios.post('http://localhost:3000/users', userData);
+      await axios.post('https://chatter-box-server-three.vercel.app/users', userData);
 
       navigate('/');
     } catch (error) {

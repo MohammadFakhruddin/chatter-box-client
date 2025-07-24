@@ -16,7 +16,7 @@ const Home = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/posts", {
+      const res = await axios.get("https://chatter-box-server-three.vercel.app/posts", {
         params: {
           page,
             size: 4,
@@ -38,7 +38,7 @@ const Home = () => {
 
   const fetchAnnouncements = async () => {
   try {
-    const res = await axios.get("http://localhost:3000/announcements");
+    const res = await axios.get("https://chatter-box-server-three.vercel.app/announcements");
     setAnnouncements(res.data);
   } catch (err) {
     console.error("Error loading announcements", err);

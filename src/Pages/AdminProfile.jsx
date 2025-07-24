@@ -15,10 +15,10 @@ const AdminProfile = () => {
 const fetchStats = async () => {
   try {
     const [postsRes, commentsRes, usersRes, tagsRes] = await Promise.all([
-      axios.get("http://localhost:3000/posts/count"),
-      axios.get("http://localhost:3000/comments/count"),
-      axios.get("http://localhost:3000/users/count"),
-      axios.get("http://localhost:3000/tags"),
+      axios.get("https://chatter-box-server-three.vercel.app/posts/count"),
+      axios.get("https://chatter-box-server-three.vercel.app/comments/count"),
+      axios.get("https://chatter-box-server-three.vercel.app/users/count"),
+      axios.get("https://chatter-box-server-three.vercel.app/tags"),
     ]);
 
     setStats({
@@ -45,9 +45,9 @@ const fetchStats = async () => {
     if (!tag.trim()) return;
 
     try {
-      await axios.post("http://localhost:3000/tags", { tag: tag.trim() });
+      await axios.post("https://chatter-box-server-three.vercel.app/tags", { tag: tag.trim() });
       setTag("");
-      const res = await axios.get("http://localhost:3000/tags");
+      const res = await axios.get("https://chatter-box-server-three.vercel.app/tags");
       const fetchedTags = res.data;
       setTags(Array.isArray(fetchedTags) ? fetchedTags : []);
     } catch (err) {

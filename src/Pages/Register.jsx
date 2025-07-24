@@ -37,7 +37,7 @@ const onSubmit = async (data) => {
       photoURL: data.photoURL,
       role: 'user', // You can change this logic
     };
-    await axios.post('http://localhost:3000/users', userData);
+    await axios.post('https://chatter-box-server-three.vercel.app/users', userData);
 
     toast.success('Registration Successful!');
     navigate(from);

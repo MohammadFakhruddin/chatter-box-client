@@ -17,6 +17,7 @@ import ManagesUsers from '../Pages/ManagesUsers';
 import ReportedActivities from '../Pages/ReportedActivities';
 import AdminProfile from '../Pages/AdminProfile';
 import PaymentSuccess from '../Pages/PaymentSuccess';
+import PrivateRoute from '../Provider/PrivateRoute';
 
 export const router = createBrowserRouter([
   {
@@ -44,20 +45,33 @@ export const router = createBrowserRouter([
       },
       {
         path: '/post/:id',
-        element: <PostDetails />,
+        element:
+          <PrivateRoute>
+            <PostDetails />,
+          </PrivateRoute>
+
       },
       {
         path: '/membership',
-        element: <Membership></Membership>
+        element:
+          <PrivateRoute>
+            <Membership></Membership>
+
+          </PrivateRoute>
+
 
       },
       {
         path: '/payment-success',
-        element: <PaymentSuccess />
+        element: <PrivateRoute>
+          <PaymentSuccess />
+        </PrivateRoute>
       },
       {
         path: '/dashboard',
-        element: <Dashboard />,
+        element: <PrivateRoute>
+          <Dashboard />
+        </PrivateRoute>,
         children: [
           {
             path: '/dashboard/myprofile',
@@ -75,11 +89,16 @@ export const router = createBrowserRouter([
       },
       {
         path: '/comments/:id',
-        element: <CommentsPage></CommentsPage>
+        element: <PrivateRoute>
+
+          <CommentsPage></CommentsPage>
+        </PrivateRoute>
       },
       {
         path: '/admin-dashboard',
-        element: <AdminDashboard></AdminDashboard>,
+        element: <PrivateRoute>
+          <AdminDashboard></AdminDashboard>
+        </PrivateRoute>,
         children: [
           {
             path: '/admin-dashboard/manage-users',
@@ -97,7 +116,7 @@ export const router = createBrowserRouter([
             path: '/admin-dashboard/make-announcement',
             element: <MakeAnnouncement></MakeAnnouncement>
           },
-         
+
         ]
       }
     ],

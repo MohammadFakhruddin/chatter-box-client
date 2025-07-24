@@ -8,9 +8,9 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { AuthContext } from "./AuthContext";
 import { auth } from "../Firebase/firebase.config";
 import axios from "axios";
+import { AuthContext } from "./AuthContext";
 
 // ✅ Always include cookies in Axios requests
 axios.defaults.withCredentials = true;

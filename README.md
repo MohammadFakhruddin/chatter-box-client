@@ -1,6 +1,10 @@
 💬 ChatterBox - A Modern MERN Stack Forum
 ChatterBox is a full-featured forum web application built with the MERN stack. It offers user authentication, real-time announcements, a voting and commenting system, membership via Stripe, and admin moderation tools. It's scalable, secure, and visually appealing with TailwindCSS and DaisyUI.
 
+Admin : jack@fruite.com
+Password : jackFruite$
+
+
 ⚙️ Tech Stack
 Frontend: React 19, TailwindCSS 4, DaisyUI, React Router 7, Axios, Recharts
 Backend: Express.js, MongoDB Atlas, Stripe API

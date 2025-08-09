@@ -88,3 +88,33 @@ Stores in announcement collection
 Visible only if announcement exists
 Triggers icon notification with count
 
+
+| **Category**    | **Technology / Package**   | **Purpose**                        |
+| --------------- | -------------------------- | ---------------------------------- |
+| **Frontend**    | React.js                   | UI development                     |
+|                 | Vite                       | Fast development build tool        |
+|                 | Tailwind CSS               | Styling and responsive design      |
+|                 | React Router DOM           | Client-side routing                |
+|                 | TanStack Query             | Data fetching and state management |
+|                 | Axios                      | API requests                       |
+|                 | React Icons / Lucide Icons | UI icons                           |
+|                 | Recharts                   | Charts and analytics               |
+|                 | ShadCN UI                  | Modern UI components               |
+| **Backend**     | Node.js                    | Server-side runtime                |
+|                 | Express.js                 | Backend framework                  |
+|                 | MongoDB                    | NoSQL database                     |
+|                 | Mongoose                   | MongoDB object modeling            |
+|                 | JWT (jsonwebtoken)         | Authentication                     |
+|                 | bcryptjs                   | Password hashing                   |
+|                 | Stripe                     | Payment processing                 |
+|                 | cookie-parser              | Handling cookies                   |
+|                 | dotenv                     | Environment variable management    |
+|                 | cors                       | Cross-origin requests handling     |
+| **Other Tools** | Git & GitHub               | Version control                    |
+|                 | Vercel / Netlify           | Frontend hosting                   |
+|                 | Render / Railway / Heroku  | Backend hosting                    |
+|                 | MongoDB Atlas              | Cloud database                     |
+|                 | Postman                    | API testing                        |
+|                 | ESLint & Prettier          | Code quality and formatting        |
+
+

@@ -122,3 +122,63 @@ Triggers icon notification with count
 |                 | ESLint & Prettier          | Code quality and formatting        |
 
 
+
+🚀 How to Run the Project
+1️⃣ Clone the Repository
+bash
+Copy
+Edit
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+
+
+2️⃣ Install Dependencies
+Install server dependencies
+bash
+Copy
+Edit
+cd server
+npm install
+Install client dependencies
+bash
+Copy
+Edit
+cd ../client
+npm install
+
+
+3️⃣ Set Up Environment Variables
+Create a .env file in the server folder and add the following:
+
+env
+Copy
+Edit
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+STRIPE_SECRET_KEY=your_stripe_secret_key
+CLIENT_URL=http://localhost:5173
+
+4️⃣ Run the Application
+Start the backend server
+bash
+Copy
+Edit
+cd server
+npm run dev
+Start the frontend
+bash
+Copy
+Edit
+cd ../client
+npm run dev
+
+5️⃣ Access the App
+Open your browser and go to:
+
+arduino
+Copy
+Edit
+http://localhost:5173
+
+
